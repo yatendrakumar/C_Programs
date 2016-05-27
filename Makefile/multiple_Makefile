@@ -1,0 +1,24 @@
+
+# some of the macros
+MAKE=make
+CHANGE_DIR= cd
+
+# Master target
+MASTER : Q1 Q2 Q3 Q4 Q5
+	
+Q1 :
+	($(CHANGE_DIR) 1_queue; $(MAKE))
+
+Q2 :
+	($(CHANGE_DIR) 2_circular_q; $(MAKE))
+
+Q3 : 
+	($(CHANGE_DIR) 3_priority_lib; $(MAKE))
+
+Q4 : 
+	($(CHANGE_DIR) 4_sll; $(MAKE))
+
+Q5 : 
+	($(CHANGE_DIR) 5_dll; $(MAKE))
+
+#end of the master make script

@@ -1,0 +1,86 @@
+Check context switches of a process
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	You can view information about your process's context switches in /proc/<pid>/status.
+	$ pid=307
+	$ grep ctxt /proc/$pid/status
+	voluntary_ctxt_switches:        41
+	nonvoluntary_ctxt_switches:     16
+	
+Change entry point in c program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	void hello_world()
+	{
+		printf("Hello world\n");
+		//return 0;
+		_exit(0);
+	}
+	/* 
+		return type of entry function should be void
+		it should end with _exit function
+		compile it using gcc -e entry_point file.c
+		The -e flag changes the address of the startup code. Startup code
+		has the responsibility of returning to the OS again so it can perform its
+		process cleanup code and other bookkeeping stuff. 
+		The test() function simply returns;
+		but there is no place to return to and hence the segmentation fault.
+	*/	
+	/*
+		If you are on a system that provides GNU Binutils (like Linux), you can use
+		the objcopy command to make an arbitrary function the new entry point.
+		Suppose a file called program.c containing the entry function:
+
+		$ cat > program.c
+		#include <stdio.h>
+		int entry()
+		{
+			return 0;
+		}
+
+		You first compile it using -c to generate a relocatable object file:
+			$ gcc -c program.c -o program.o
+		Then you redefine entry to be main:
+			$ objcopy --redefine-sym entry=main program.o
+		Now use gcc to compile the new object file:
+			$ gcc program.o -o program
+
+		NOTE: If your program already has a function
+		called main, before step 2, you can do a
+		separate objcopy invocation:
+			objcopy --redefine-sym oldmain=main program.o
+	*/
+
+sturct bit
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	int a:3;
+	/* 2: 00000010 (Select three two bit)
+	 * 6: 00000110
+	 * -6: 11111001+1=11111010 (2's comliment)
+	 */ 
+
+Struct 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Structure is a data type. You don't give values to a data type. You give values to instances/objects of data types.
+	Below is not correct/not possible
+	typedef struct
+	{
+		int id=0;
+		char* name="none";
+	}employee;
+
+	// Do like below 
+	typedef struct
+	{
+	   int id;
+	   char* name;
+	}employee;
+
+	employee emp = {
+		.id = 0 
+		.name = "none"
+	};
+	
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
