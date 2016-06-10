@@ -1,3 +1,7 @@
+Objective questions sites
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	* http://www.geeksforgeeks.org/c/#StorageClasses
+
 Check context switches of a process
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	You can view information about your process's context switches in /proc/<pid>/status.
@@ -52,33 +56,115 @@ Change entry point in c program
 sturct bit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	* int a:3;
-	/* 2: 00000010 (Select three two bit)
-	 * 6: 00000110
-	 * -6: 11111001+1=11111010 (2's comliment)
-	 */
+		/* 2: 00000010 (Select three two bit)
+		 * 6: 00000110
+		 * -6: 11111001+1=11111010 (2's comliment)
+		 */
+	*  Array of bit fields is not allowed.
+		struct test
+		{
+		  unsigned int x[10]: 5;
+		};
+		O/P: bit_field_array.c:4:5: error: bit-field ‘x’ has invalid type
 	* unsigned char : 0;
-		The :0 field (0 width bit field) forces the next bit width member assignment to start from the next nibble. 
+		A special unnamed bit field of size 0 is used to force alignment on next boundary.
+			struct date
+			{
+				unsigned int d: 5; unsigned int:0; unsigned int m: 4; unsigned int y;
+			};
+			printf("Size of date is %d bytes\n", sizeof(struct date));
+		output is 12.
+			struct date
+			{
+				unsigned int d: 5;
+				unsigned int m: 4;
+				unsigned int:0;
+				unsigned int y;
+			};
+		output is 8.
+	* We cannot have pointers to bit field members as they may not start at a byte boundary. 
+		struct test
+		{
+			unsigned int x: 5; unsigned int y: 5; unsigned int z;
+		};
+		int main()
+		{
+			struct test t;
+			printf("Address of t.x is %p", &t.x);
+			printf("Address of t.z is %p", &t.z);
+			return 0;
+		}
+		o/p: struct_pointer_to_bitfield.c: In function ‘main’:
+			struct_pointer_to_bitfield.c:: error: cannot take address of bit-field ‘x’
+	* unsigned int y: 33; 
+	Assume that unsigned int takes 4 bytes and long int takes 8 bytes.
+	O/P: struct_size.c::: error: width of ‘y’ exceeds its type
 
 Struct 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Structure is a data type. You don't give values to a data type. You give values to instances/objects of data types.
+	* struct object cannot be initialized globally
+	* Structure is a data type. You don't give values to a data type. You give values to instances/objects of data types.
 	Below is not correct/not possible
-	typedef struct
-	{
-		int id=0;
-		char* name="none";
-	}employee;
+		typedef struct
+		{
+			int id=0;
+			char* name="none";
+		}employee;
 
-	// Do like below 
-	typedef struct
-	{
-	   int id;
-	   char* name;
-	}employee;
+		// Do like below 
+		typedef struct
+		{
+		   int id;
+		   char* name;
+		}employee;
 
-	employee emp = {
-		.id = 0 
-		.name = "none"
+		employee emp = {
+			.id = 0 
+			.name = "none"
+		};
+	* Structure members cannot be initialized with declaration.
+	struct Point
+	{
+	   int x = 0;  // COMPILER ERROR:  cannot initialize members here
+	   int y = 0;  // COMPILER ERROR:  cannot initialize members here
+	}; 
+	The reason for above error is simple, when a datatype is declared, no memory is allocated for it. 
+	Memory is allocated only when variables are created.
+	* Structure members can be initialized using curly braces ‘{}’.
+		struct Point p1 = {0, 1}; 
+	* designated Initialization 
+		Point p1 = {.y = 0, .z = 1, .x = 2};
+	
+Union	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	* Like Structures, union is a user defined data type. In union, all members share the same memory location. 
+	union test
+	{
+	   int x, y;
+	};
+	both x and y share the same location. If we change x, we can see the changes being reflected in y.
+	
+	suppose we want to implement a binary tree data structure where each leaf node has a double data value, 
+	while each internal node has pointers to two children, but no data. If we declare this as:
+	struct NODE {
+	  struct NODE *left;
+	  struct NODE *right;
+	  double data;
+	};
+	then every node requires 16 bytes, with half the bytes wasted for each type of node. 
+	On the other hand, if we declare a node as following, then we can save space.
+	struct NODE
+	{
+		bool is_leaf;
+		union
+		{
+		    struct
+		    {
+		        struct NODE *left;
+		        struct NODE *right;
+		    } internal;
+		    double data;
+		} info;
 	};
 	
 Define macro during compile time	
@@ -178,7 +264,28 @@ sizeof
 		to the sizeof operator that ASCII value is nothing but an integer.
 	* sizeof("string") = 7
 		The sizeof return the number of characters including the null character
-
+	* size of "name[0]"
+		struct employee
+		{
+			int     emp_id;
+			int     name_len;
+			char    name[0];
+		};
+		In gcc, when we create an array of zero length, 
+		it is considered as array of incomplete type that’s why gcc reports its size as “0” bytes. 
+		This technique is known as “Stuct Hack”. 
+		When we create array of zero length inside structure, it must be (and only) last member of structure.
+		
+		“Struct Hack” technique is used to create variable length member in a structure. 
+		In the above structure, string length of “name” is not fixed, so we can use “name” as variable length array.
+		struct employee *e = malloc(sizeof(*e) + sizeof(char) * 128); is equivalent to
+		struct employee
+		{
+			int     emp_id;
+			int     name_len;
+			char    name[128]; /* character array of size 128 */
+		};
+		
 Array
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
 	* a[2][] - wrong
@@ -190,7 +297,7 @@ Free a block of memory previously allocated without using free
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	* realloc(ptr, 0))
 	
-#define or enum
+#define/Macro Vs enum
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
 	* Enum values can be automatically generated by compiler if we let it. 
 		But all the define values are to be mentioned specifically. 
@@ -198,6 +305,11 @@ Free a block of memory previously allocated without using free
 	So, the enum is better if we use a debugger to debug the code.
 	* If we use enum values in a switch and the default case is missing, some compiler will give a warning.
 	* Enum always makes identifiers of type int. But the macro let us choose between different integral types.
+	* Two enum names can have same value. The enum can contain only the constant value.
+	* All enum constants must be unique in their scope. Enums follow scope rules.
+		enum state  {working, failed}; enum result {failed, passed};
+		int main()  { return 0; }
+		o/p: Compile Error: 'failed' has a previous declaration as 'state failed'
 	* Macro does not specifically maintain scope restriction unlike enum. 
 	
 malloc(0)
@@ -217,11 +329,152 @@ Reading C type declarations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
 	* http://unixwiz.net/techtips/reading-cdecl.html
 	
+Extern	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	1. Declaration can be done any number of times but definition only once.
+	2. “extern” keyword is used to extend the visibility of variables/functions().
+	3. Since functions are visible through out the program by default.
+		The use of extern is not needed in function declaration/definition. Its use is redundant.
+	4. When extern is used with a variable, it’s only declared not defined.
+	5. As an exception, when an extern variable is declared with initialization, it is taken as definition of the variable as well.
 	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	Scenario 1:
+		extern int var;
+		int main(void) {
+			var = 10;return 0;
+		}
+	Analysis: This program throws error in compilation. 
+		Because var is declared but not defined anywhere. 
+		Essentially, the var isn’t allocated any memory And the program is trying to change the value to 10 of a variable that doesn’t exist at all.
+	if Supposing that somefile.h has the definition of var. This program will be compiled successfully.
 
+	Scenario 2:	
+		extern int var = 0;
+		int main(void) {
+			var = 10;return 0;
+		}
+	They say that..if a variable is only declared and an initializer is also provided with that declaration, 
+	then the memory for that variable will be allocated i.e. that variable will be considered as defined.
+	
+Variable Declaration and Scope		
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	* A variable declared in a block is accessible in the block and all inner blocks of that block, but not accessible outside the block.
+	What if the inner block itself has one variable with the same name?
+		If an inner block declares a variable with the same name as the variable declared by the outer block, 
+		then the visibility of the outer block variable ends at the pint of declaration by inner block.
+	* i) int var_9 = 1;
+		ii) int 9_var = 2;
+		iii) int _ = 3;
+	In C language, a variable name can consists of letters, digits and underscore i.e. _ . 
+	But a variable name has to start with either letter or underscore. 
+	It can't start with a digit. So valid variables are var_9 and _ from the above question. 
+	Even two back to back underscore i.e. __ is also a valid variable name. 
+	Even _9 is a valid variable. But 9var and 9_ are invalid variables in C. 
+	This will be caught at the time of compilation itself. That's why the correct answer is A).
 
+call by value and call by reference
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	int i ;
+	program main ()
+	{
+		int j = 60;
+		i = 50;
+		call f (i, j);
+		print i, j;
+	}
+	procedure f (x, y)
+	{           
+		i = 100;
+		x = 10;
+		y = y + i ;
+	}
+	
+	Call by value : i = 100, j = 60; Call by reference : i = 10, j = 7
+	
+C allows a global variable to be declared again when first declaration doesn’t initialize the variable.	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	int x;
+	int x = 5;
+	 
+	int main()
+	{
+	   printf("%d", x);
+	   return 0; 
+	}
+	O/P: 5 
+
+Void pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	int main()
+	{
+		void *vptr, v;
+		v = 0;
+		vptr = &v;
+		printf("%v", *vptr);
+		getchar();
+		return 0;
+	}
+	O/P: void is not a valid type for declaring variables. void * is valid though.
+
+Comparision with signed var	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	#include <stdio.h>
+	int main()
+	{
+		if (sizeof(int) > -1)
+		    printf("Yes");
+		else
+		    printf("No");
+		return 0;
+	}
+	In C, when an intger value is compared with an unsigned it, the int is promoted to unsigned. 
+	Negative numbers are stored in 2's complement form and unsigned value of the 2's complement form is much higher than the sizeof int.
+
+Pointer Arithmetic (Computation of Ptr2 - Ptr1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	struct test
+	{
+		unsigned int x; unsigned int k;	long int y: 25;
+	//    long int k: 64;
+		unsigned int z;
+	};
+	int main()
+	{
+		struct test t;
+		unsigned int *ptr1 = &t.x; unsigned int *ptr2 = &t.z;
+		printf("%p\n", ptr1); printf("%p\n", ptr2);
+		printf("%ld\n", ptr2 - ptr1);
+		return 0;
+	}
+	Final Result  = (ptr2 - ptr1) / Size of Data Type
+
+Interesting Facts about Bitwise Operators in C
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	* The left shift and right shift operators should not be used for negative numbers
+	* The bitwise operators should not be used in-place of logical operators.
+		int main()
+		{
+		   int x = 2, y = 5;
+		   (x & y)? printf("True ") : printf("False ");
+		   (x && y)? printf("True ") : printf("False ");
+		   return 0;
+		}
+		// Output: False True
+	* The left-shift and right-shift operators are equivalent to multiplication and division by 2 respectively.
+	
+Understanding “register” keyword
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+	* Registers are faster than memory to access, so the variables which are most frequently used in a C program 
+	can be put in registers using register keyword. 
+	The keyword register hints to compiler that a given variable can be put in a register. 
+	It’s compiler’s choice to put it in a register or not.
+	* Accessing address of a register is invalid
+		  register int i = 10; int *a = &i; 
+	* Register keyword can be used with pointer variables.	
+		register int *a = &i;
+	* Register is a storage class, and C doesn’t allow multiple storage class specifiers for a variable. 
+	So, register can not be used with static .
+	  register static int *a = &i;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
+	
+	

@@ -12,13 +12,29 @@ struct Sanjay {
     char e;
     int f;
 };
+struct employee
+{
+    int     emp_id;
+    int     name_len;
+    char    name[0];
+};
+struct test
+{
+    unsigned int x;
+    unsigned int y: 33;
+    unsigned int z;
+};
 int main(){
     static int d;
     struct Sanjay s;
-    printf("size  = %d\n", sizeof(s));
-    printf("size  = %d\n", sizeof(s.v));
-    printf("size  = %d\n", sizeof(s.s));
-    printf("size  = %d\n", roll);
+    struct employee emp;
+    printf("size of s struct = %d\n", sizeof(s));
+    printf("size of s.v = %d\n", sizeof(s.v));
+    printf("size of s.s = %d\n", sizeof(s.s));
+    printf("size of emp struct = %d\n", sizeof(emp));
+    printf("size of emp name array = %d\n", sizeof(emp.name));
+    printf("size of roll = %d\n", roll);
+    printf("size of test struct %d", sizeof(struct test));
 }
 
 /*Ans:
