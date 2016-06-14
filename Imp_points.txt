@@ -475,6 +475,15 @@ Understanding “register” keyword
 	* Register is a storage class, and C doesn’t allow multiple storage class specifiers for a variable. 
 	So, register can not be used with static .
 	  register static int *a = &i;
+	  
+Typedef is storage class specifier	  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-	
-	
+	* The typedef specifier does not reserve storage and is called a storage class specifier.
+	* typedef doesn't declare an instance of a variable, it declares a type (type alias actually), 
+	static is a qualifier you apply to an instance, not a type, so you can use static when you use the type, but not when you define the type. 
+	Like this..
+		typedef int int32;
+		static int32 foo;
+
+
+
