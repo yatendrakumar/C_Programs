@@ -3,20 +3,19 @@
 #include	<string.h>
 
 void reverse(char *str, int beg, int end);
+
 int main()
 {
 	char *str = (char *)malloc(100);
 	char *ptr;
 	int len;
-	printf("\nEnter the string:\t");
+	printf("Enter the string:\t\n");
 	fgets(str, 100, stdin);
 
 	reverse(str, 0, (strlen(str) - 1));
-
-	printf("\n\nReverse is %s",str);
+	printf("Reverse is %s\n",str);
 	return 0;
 }
-
 
 void reverse(char *str, int beg, int end)
 {
