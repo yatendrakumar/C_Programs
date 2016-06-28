@@ -14,3 +14,11 @@ int main(){
     printf("%d %d %.0d\n", a, b, d);
     return 0;
 }
+/*o/p:
+1
+2147483646
+He got 90% marks in math
+Hello world
+5
+10 20 
+*/
