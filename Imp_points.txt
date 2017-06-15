@@ -1,6 +1,14 @@
 Objective questions sites
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	* http://www.geeksforgeeks.org/c/#StorageClasses
+	* http://www.sanfoundry.com/c-programming-examples/
+	* http://www.sanfoundry.com/1000-cpp-algorithms-problems-programming-examples/
+	* http://javarevisited.blogspot.in/2015/01/top-20-string-coding-interview-question-programming-interview.html
+	* http://www.geeksforgeeks.org/c/
+	* http://www.programmingsimplified.com/c-program-examples
+	* http://www.sanfoundry.com/1000-c-algorithms-problems-programming-examples/
+	* https://www.programiz.com/c-programming#learn-c-tutorial
+	* https://computing.llnl.gov/tutorials/pthreads/#Pthread
 
 Check context switches of a process
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
